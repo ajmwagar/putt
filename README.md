@@ -9,13 +9,25 @@ A **work in progress** stack-based, [code-golfing](https://en.wikipedia.org/wiki
 
 ## Example code 
 
+
+**Note: this is broken until I fix strings**
+
 ```putt
 "Hello, World!",
 ```
 ```
 Hello, World!
 ```
-**Note: this is broken until I fix strings**
+
+**This works though:**
+```putt
+"Hello",
+"World".
+```
+```
+Hello
+World
+```
 
 ```putt
 "WeCanDoMath",,"Times",10 8*,"Division",5 80/,"Addition",20 10+,"Subtraction",20 10-,"Modulo",10 20%,
@@ -69,6 +81,6 @@ Modulo
 |Symbol|Name|Pops|Description|
 |------|----|-----|-----------------------------------|
 |`?`|if|`pop(a, b, c)`|pops `a` (expression) then `b` and/or `c` (execs based on `a`)|
-|`|`|else|`pop(a, b, c)`| pops `a` (expression) then `b` and/or `c` (execs based on `a`)|
+|`\|`|else|`pop(a, b, c)`| pops `a` (expression) then `b` and/or `c` (execs based on `a`)|
 |`@`|loop|`N/A`| loops until break (`;`))|
 |`;`|break|`N/A`| breaks out of active loop)|

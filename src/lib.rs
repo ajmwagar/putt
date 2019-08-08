@@ -1,6 +1,6 @@
 use std::{io, io::prelude::*, error::Error, fs::File, path::PathBuf};
 
-const DEBUG: bool = true;
+const DEBUG: bool = false;
 
 use nom::{
     branch::alt,

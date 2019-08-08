@@ -1,7 +1,7 @@
 use nom::{
     is_a,
     branch::alt,
-    bytes::complete::{take, tag, escaped},
+    bytes::complete::{is_not, tag, escaped},
     character::complete::{not_line_ending, alpha1, char as ch, digit1, multispace0, multispace1, one_of},
     number::complete::{double},
     combinator::{rest, cut, map, map_res, opt},
@@ -108,30 +108,29 @@ fn parse_string<'a>(i: &'a str) -> IResult<&'a str, Atom, VerboseError<&'a str>>
     if super::DEBUG {
         println!("String parser");
     }
-    let res = map(context("string", preceded(ch('"'), parse_str)), |sym_str: &str| {
-        println!("Str: {}", sym_str);
+    let res = map(context("string", delimited(ch('"'), is_not("\""), ch('"'))), |sym_str: &str| {
         Atom::Str(sym_str.to_string())
     })(i);
-    println!("Res {:?}", res);
+    // println!("Res {:?}", res);
     res
 }
 
-fn parse_str<'a>(i: &'a str) -> IResult<&'a str, &'a str, VerboseError<&'a str>> {
-    if super::DEBUG {
-        println!("Str parser");
-    }
-    let tmp_i: &'a str;
-    if i.contains("\"") {
-         tmp_i = i.trim_right_matches("\"");
-    }
-    else {
-        tmp_i = i;
-    }
+// fn parse_str<'a>(i: &'a str) -> IResult<&'a str, &'a str, VerboseError<&'a str>> {
+//     if super::DEBUG {
+//         println!("Str parser");
+//     }
+//     // let tmp_i: &'a str;
+//     // if i.contains("\"") {
+//     //      tmp_i = i.trim_right_matches("\"");
+//     // }
+//     // else {
+//     //     tmp_i = i;
+//     // }
 
-    let res = context("str", escaped(take(tmp_i.len()), '\\', one_of(r#""n\"#)))(tmp_i);
-    println!("Res {:?}", res);
-    res
-}
+//     // let res = context("str", escaped(take(i.len()), '\\', one_of(r#""n\"#)))(i);
+//     // println!("Res {:?}", res);
+//     res
+// }
 
 fn parse_com_string<'a>(i: &'a str) -> IResult<&'a str, Atom, VerboseError<&'a str>> {
     map(context("string", delimited(
@@ -241,4 +240,26 @@ fn parse_if<'a>(i: &'a str) -> IResult<&'a str, Expr, VerboseError<&'a str>> {
 
 pub fn parse_expr<'a>(i: &'a str) -> IResult<&'a str, Expr, VerboseError<&'a str>> {
   preceded(multispace0, alt((parse_func, parse_if)))(i)
+}
+
+
+
+mod tests {
+    macro_rules! nom_eq {
+    ($p:expr,$e:expr) => (
+        assert_eq!($p.unwrap().1, $e)
+    )
+    }
+
+    fn atom_str(s: &str) -> Atom {
+        Atom::Str(s.to_string())
+    }
+
+    use super::*;
+    #[test]
+    fn assert_parse_string() {
+        nom_eq!(parse_string("\"Hello, World!\""), atom_str("Hello, World"));
+        nom_eq!(parse_string("\"Hello, World!\""), atom_str("Hello, World"));
+
+    }
 }

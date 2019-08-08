@@ -63,7 +63,8 @@ pub enum BuiltIn {
     // Keywords
     Not,
     Print,
-    PrintLn
+    PrintLn,
+    Cmp
 
 }
 #[derive(Debug, PartialEq, Clone)] pub enum Expr {
@@ -235,6 +236,11 @@ impl Putt {
                                 BuiltIn::Print => {
                                     if let Some(first_elem) = self.stack.pop() {
                                         print!("{} ", first_elem)
+                                    }
+                                },
+                                BuiltIn::Cmp => {
+                                    if let Some(Atom::Str(first_elem)) = self.stack.pop() {
+                                        self.stack.push(Atom::Str(String::from_utf8_lossy(&compress(first_elem.as_bytes())).to_string()))
                                     }
                                 }
                             } 

@@ -1,3 +1,4 @@
+use smaz::{compress, decompress};
 use nom::{
     is_a,
     branch::alt,
@@ -17,6 +18,7 @@ const FALSE: &str = "#f";
 const NOT: &str = "n";
 const PRINTLN: &str = ",";
 const PRINT: &str = ".";
+const CMP: &str = "cmp";
 const IF: &str = "?";
 const ELSE: &str = "|";
 
@@ -27,13 +29,19 @@ pub struct RomanNumeral {
     value: u128
 }
  
-const NUMERALS: [RomanNumeral; 19] = [
+const NUMERALS: [RomanNumeral; 25] = [
     RomanNumeral {symbol: "Mk",  value: 1_000_000},
+    RomanNumeral {symbol: "CMk",  value: 900_000},
     RomanNumeral {symbol: "Dk",  value: 500_000},
+    RomanNumeral {symbol: "CDk",  value: 400_000},
     RomanNumeral {symbol: "Ck",  value: 100_000},
+    RomanNumeral {symbol: "XCk",  value: 90_000},
     RomanNumeral {symbol: "Lk",  value: 50_000},
+    RomanNumeral {symbol: "XLk",  value: 40_000},
     RomanNumeral {symbol: "Xk",  value: 10_000},
+    RomanNumeral {symbol: "IXk",  value: 9_000},
     RomanNumeral {symbol: "Vk",  value: 5_000},
+    RomanNumeral {symbol: "IVk",  value: 4_000},
     RomanNumeral {symbol: "M",  value: 1000},
     RomanNumeral {symbol: "CM", value: 900},
     RomanNumeral {symbol: "D",  value: 500},
@@ -90,6 +98,7 @@ fn parse_builtin<'a>(i: &'a str) -> IResult<&'a str, BuiltIn, VerboseError<&'a s
             map(tag(NOT), |_| BuiltIn::Not),
             map(tag(PRINTLN), |_| BuiltIn::PrintLn),
             map(tag(PRINT), |_| BuiltIn::Print),
+            map(tag(CMP), |_| BuiltIn::Cmp),
             )), multispace0)(i)
 }
 
@@ -117,39 +126,18 @@ fn parse_string<'a>(i: &'a str) -> IResult<&'a str, Atom, VerboseError<&'a str>>
     let res = map(context("string", delimited(ch('"'), is_not("\""), ch('"'))), |sym_str: &str| {
         Atom::Str(sym_str.to_string())
     })(i);
-    // println!("Res {:?}", res);
+    res
+}
+fn parse_com_string<'a>(i: &'a str) -> IResult<&'a str, Atom, VerboseError<&'a str>> {
+    if super::DEBUG {
+        println!("String parser");
+    }
+    let res = map(context("string", delimited(ch('`'), is_not("`"), ch('`'))), |sym_str: &str| {
+        Atom::Str(String::from_utf8(decompress(sym_str.as_bytes()).unwrap()).unwrap())
+    })(i);
     res
 }
 
-// fn parse_str<'a>(i: &'a str) -> IResult<&'a str, &'a str, VerboseError<&'a str>> {
-//     if super::DEBUG {
-//         println!("Str parser");
-//     }
-//     // let tmp_i: &'a str;
-//     // if i.contains("\"") {
-//     //      tmp_i = i.trim_right_matches("\"");
-//     // }
-//     // else {
-//     //     tmp_i = i;
-//     // }
-
-//     // let res = context("str", escaped(take(i.len()), '\\', one_of(r#""n\"#)))(i);
-//     // println!("Res {:?}", res);
-//     res
-// }
-
-fn parse_com_string<'a>(i: &'a str) -> IResult<&'a str, Atom, VerboseError<&'a str>> {
-    map(context("string", delimited(
-                char('`'),
-                not_line_ending,
-                char('`')
-    )), |sym_str: &str| {
-        if super::DEBUG {
-            println!("Str: {}", sym_str);
-        }
-        Atom::Str(sym_str.to_string())
-    })(i)
-}
 // }
 
 fn parse_roman<'a>(i: &'a str) -> IResult<&'a str, Atom, VerboseError<&'a str>> {
@@ -186,7 +174,7 @@ fn parse_float<'a>(i: &'a str) -> IResult<&'a str, Atom, VerboseError<&'a str>> 
 
 /// Parse atomics
 fn parse_atom<'a>(i: &'a str) -> IResult<&'a str, Atom, VerboseError<&'a str>> {
-    preceded(multispace0, alt((parse_num, parse_bool, parse_string, map(parse_builtin, Atom::BuiltIn), parse_roman)))(i)
+    preceded(multispace0, alt((parse_num, parse_bool, parse_com_string, parse_string, map(parse_builtin, Atom::BuiltIn), parse_roman)))(i)
 }
 
 
@@ -275,6 +263,10 @@ mod tests {
     #[test]
     fn assert_roman() {
         nom_eq!(parse_roman("CMD"), atom_num(1400));
+        nom_eq!(parse_roman("CMk"), atom_num(900_000));
+        nom_eq!(parse_roman("Mk"), atom_num(1_000_000));
+        nom_eq!(parse_roman("Dk"), atom_num(500_000));
+        nom_eq!(parse_roman("Lk"), atom_num(50_000));
         nom_eq!(parse_roman("C"), atom_num(100));
         nom_eq!(parse_roman("X"), atom_num(10));
         nom_eq!(parse_roman("V"), atom_num(5));

@@ -255,11 +255,23 @@ mod tests {
         Atom::Str(s.to_string())
     }
 
+    fn atom_num(s: isize) -> Atom {
+        Atom::Num(s as i128)
+    }
+
     use super::*;
     #[test]
     fn assert_parse_string() {
-        nom_eq!(parse_string("\"Hello, World!\""), atom_str("Hello, World"));
-        nom_eq!(parse_string("\"Hello, World!\""), atom_str("Hello, World"));
+        nom_eq!(parse_string("\"Hello, World!\""), atom_str("Hello, World!"));
+        nom_eq!(parse_string("\"Hello, World\""), atom_str("Hello, World"));
+    }
 
+    fn assert_roman() {
+        nom_eq!(parse_roman("CMD"), atom_num(1400));
+        nom_eq!(parse_roman("C"), atom_num(100));
+        nom_eq!(parse_roman("X"), atom_num(10));
+        nom_eq!(parse_roman("V"), atom_num(5));
+        nom_eq!(parse_roman("IV"), atom_num(4));
+        nom_eq!(parse_roman("I"), atom_num(1));
     }
 }

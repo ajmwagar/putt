@@ -24,10 +24,16 @@ use super::*;
 
 pub struct RomanNumeral {
     symbol: &'static str,
-    value: u32
+    value: u128
 }
  
-const NUMERALS: [RomanNumeral; 13] = [
+const NUMERALS: [RomanNumeral; 19] = [
+    RomanNumeral {symbol: "Mk",  value: 1_000_000},
+    RomanNumeral {symbol: "Dk",  value: 500_000},
+    RomanNumeral {symbol: "Ck",  value: 100_000},
+    RomanNumeral {symbol: "Lk",  value: 50_000},
+    RomanNumeral {symbol: "Xk",  value: 10_000},
+    RomanNumeral {symbol: "Vk",  value: 10_000},
     RomanNumeral {symbol: "M",  value: 1000},
     RomanNumeral {symbol: "CM", value: 900},
     RomanNumeral {symbol: "D",  value: 500},
@@ -43,7 +49,7 @@ const NUMERALS: [RomanNumeral; 13] = [
     RomanNumeral {symbol: "I",  value: 1}
 ];
  
-pub fn from_roman(roman: &str) -> u32 {
+pub fn from_roman(roman: &str) -> u128 {
     match NUMERALS.iter().find(|num| roman.starts_with(num.symbol)) {
         Some(num) => num.value + from_roman(&roman[num.symbol.len()..]),
         None => 0, // if string empty, add nothing

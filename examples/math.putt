@@ -1,2 +1,10 @@
-"WeCanDoMath","Times",10 8*,"Division",5 80/,"Addition",20 10+,"Subtraction",20 10-,"Modulo",10 20%,
-
+"Math Rules!",,
+"We can do:",
+"Multiplication: (800 10*) == ".800 10*,
+"Division: (10 800/) == ".10 800/,
+"Addition: (909289 989898+) == ".909289 989898+,
+"Subtraction: (989898 1-) == ".989898 1-,
+"Modulus: (9900 989898%) == ".9900 989898%,
+"Exponents: (2 989898^) == ".2 989898^,
+"Factorial: (30!) == ".XXX!,
+"ROMAN NUMERALS: (CMD, X, Mk, IV, LkI) == ".CMD.X.Mk.IV.LkI ,

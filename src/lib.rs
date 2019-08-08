@@ -234,7 +234,7 @@ impl Putt {
                                 }, 
                                 BuiltIn::Print => {
                                     if let Some(first_elem) = self.stack.pop() {
-                                        print!("{}", first_elem)
+                                        print!("{} ", first_elem)
                                     }
                                 }
                             } 

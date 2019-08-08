@@ -1,6 +1,6 @@
 use std::{io, io::prelude::*, error::Error, fs::File, path::PathBuf};
 use structopt::StructOpt;
-use putt::parser::eval_from_str;
+use putt::*;
 
 #[derive(StructOpt, Debug)]
 #[structopt(name = "putt")]
@@ -11,17 +11,19 @@ struct PuttCLI {
 }
 
 fn main() -> Result<(), Box<dyn Error>> {
-    let putt = PuttCLI::from_args();
+    let puttcli = PuttCLI::from_args();
+
+    let mut putt = Putt::new();
 
     // Load file or open REPL
-    if let Some(path) = putt.path {
+    if let Some(path) = puttcli.path {
         let mut file = File::open(path)?;
         let mut fstring = String::new();
         file.read_to_string(&mut fstring)?;
-
-        let output = eval_from_str(&fstring)?;
-        println!("{:?}", output)
-
+        
+        putt.parse(&fstring)?;
+        putt.eval_expression()?;
+        // println!("{:?}", putt.stack.pop());
     }
     else {
         print!("> ");
@@ -30,8 +32,15 @@ fn main() -> Result<(), Box<dyn Error>> {
         let stdin = io::stdin();
         // Start reading lines
         for line in stdin.lock().lines() {
-            // TODO: Parse tokens
-            println!("{}", line.unwrap());
+            putt.parse(&line.unwrap())?;
+            // Inject printing code at the end
+            if let Some(Expr::Function(mut src)) = putt.src {
+                src.push(Atom::BuiltIn(BuiltIn::PrintLn));
+                putt.src = Some(Expr::Function(src));
+            }
+
+            putt.eval_expression()?;
+
             print!("> ");
             io::stdout().flush()?;
         }

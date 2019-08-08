@@ -1,3 +1,4 @@
+#![feature(const_generics)]
 use std::error::Error;
 
 const DEBUG: bool = false;
@@ -5,7 +6,7 @@ const DEBUG: bool = false;
 use nom::error::VerboseError;
 
 use parser::*;
-use smaz::{compress};
+use shoco_rs::{compress};
 
 pub mod parser;
 
@@ -231,7 +232,7 @@ impl Putt {
                                 },
                                 BuiltIn::Cmp => {
                                     if let Some(Atom::Str(first_elem)) = self.stack.pop() {
-                                        self.stack.push(Atom::Str(String::from_utf8_lossy(&compress(first_elem.as_bytes())).to_string()))
+                                        self.stack.push(Atom::Str(String::from_utf8_lossy(&compress(&first_elem)).to_string()));
                                     }
                                 }
                             } 

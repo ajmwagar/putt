@@ -26,7 +26,8 @@ fn main() -> Result<(), Box<dyn Error>> {
         // println!("{:?}", putt.stack.pop());
     }
     else {
-        print!("> ");
+        println!("PUTT REPL v0.0.1");
+        print!(">> ");
         io::stdout().flush()?;
 
         let stdin = io::stdin();
@@ -34,14 +35,14 @@ fn main() -> Result<(), Box<dyn Error>> {
         for line in stdin.lock().lines() {
             putt.parse(&line.unwrap())?;
             // Inject printing code at the end
-            // if let Some(Expr::Function(mut src)) = putt.src {
-            //     src.push(Atom::BuiltIn(BuiltIn::PrintLn));
-            //     putt.src = Some(Expr::Function(src));
-            // }
+            if let Some(Expr::Function(mut src)) = putt.src {
+                src.push(Atom::BuiltIn(BuiltIn::Print));
+                putt.src = Some(Expr::Function(src));
+            }
 
             putt.eval_expression()?;
 
-            print!("> ");
+            print!("\n>> ");
             io::stdout().flush()?;
         }
     }

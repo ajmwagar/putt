@@ -1,11 +1,10 @@
-use smaz::{compress, decompress};
+use smaz::{decompress};
 use nom::{
-    is_a,
     branch::alt,
-    bytes::complete::{is_not, tag, escaped},
-    character::complete::{not_line_ending, alpha1, char as ch, digit1, multispace0, multispace1, one_of},
+    bytes::complete::{is_not, tag},
+    character::complete::{alpha1, char as ch, digit1, multispace0, multispace1, one_of},
     number::complete::{double},
-    combinator::{rest, cut, map, map_res, opt},
+    combinator::{cut, map, map_res, opt},
     error::{context, VerboseError},
     multi::many0,
     sequence::{delimited, preceded, terminated, tuple},
@@ -20,7 +19,7 @@ const PRINTLN: &str = ",";
 const PRINT: &str = ".";
 const CMP: &str = "cmp";
 const IF: &str = "?";
-const ELSE: &str = "|";
+const _ELSE: &str = "|";
 
 use super::*;
 
@@ -107,18 +106,7 @@ fn parse_bool<'a>(i: &'a str) -> IResult<&'a str, Atom, VerboseError<&'a str>> {
     alt((map(tag(TRUE), |_| Atom::Boolean(true)), map(tag(FALSE), |_| Atom::Boolean(false))))(i)
 }
 
-/// The next easiest thing to parse are keywords.
-/// We introduce some error handling combinators: `context` for human readable errors
-/// and `cut` to prevent back-tracking.
-///
-/// Put plainly: `preceded(tag(":"), cut(alpha1))` means that once we see the `:`
-/// character, we have to see one or more alphabetic chararcters or the input is invalid.
-fn parse_keyword<'a>(i: &'a str) -> IResult<&'a str, Atom, VerboseError<&'a str>> {
-    map(context("keyword", preceded(tag(":"), cut(alpha1))), |sym_str: &str| {
-        Atom::Keyword(sym_str.to_string())
-    })(i)
-}
-
+/// Parse string literal
 fn parse_string<'a>(i: &'a str) -> IResult<&'a str, Atom, VerboseError<&'a str>> {
     if super::DEBUG {
         println!("String parser");
@@ -128,6 +116,8 @@ fn parse_string<'a>(i: &'a str) -> IResult<&'a str, Atom, VerboseError<&'a str>>
     })(i);
     res
 }
+
+/// Parse and decompress a smaz encoded string
 fn parse_com_string<'a>(i: &'a str) -> IResult<&'a str, Atom, VerboseError<&'a str>> {
     if super::DEBUG {
         println!("String parser");
@@ -138,8 +128,7 @@ fn parse_com_string<'a>(i: &'a str) -> IResult<&'a str, Atom, VerboseError<&'a s
     res
 }
 
-// }
-
+/// Parse roman numeral literal
 fn parse_roman<'a>(i: &'a str) -> IResult<&'a str, Atom, VerboseError<&'a str>> {
     map(context("roman numeral", preceded(multispace0, alpha1)), |numeral: &str| {
         let num = from_roman(numeral) as Num;
@@ -149,8 +138,6 @@ fn parse_roman<'a>(i: &'a str) -> IResult<&'a str, Atom, VerboseError<&'a str>> 
         Atom::Num(num)
     })(i)
 }
-
-
 
 /// Parse an integer, either singed or unsigned
 fn parse_num<'a>(i: &'a str) -> IResult<&'a str, Atom, VerboseError<&'a str>> {
@@ -174,24 +161,12 @@ fn parse_float<'a>(i: &'a str) -> IResult<&'a str, Atom, VerboseError<&'a str>> 
 
 /// Parse atomics
 fn parse_atom<'a>(i: &'a str) -> IResult<&'a str, Atom, VerboseError<&'a str>> {
-    preceded(multispace0, alt((parse_num, parse_bool, parse_com_string, parse_string, map(parse_builtin, Atom::BuiltIn), parse_roman)))(i)
+    // TODO: Delimite floating points
+    preceded(multispace0, alt((/*parse_float, */parse_num, parse_bool, parse_com_string, parse_string, map(parse_builtin, Atom::BuiltIn), parse_roman, )))(i)
 }
 
 
-/// We then add the Expr layer on top
-fn parse_constant<'a>(i: &'a str) -> IResult<&'a str, Expr, VerboseError<&'a str>> {
-  map(parse_atom, |atom| Expr::Constant(atom))(i)
-}
-
-/// We can now use our new combinator to define the rest of the `Expr`s.
-///
-/// Starting with function application, we can see how the parser mirrors our data
-/// definitions: our definition is `Function(Vec<Expr>, Box<Expr>)`, so we know
-/// that we need to parse an expression and then parse 0 or more expressions, all
-/// wrapped in an S-expression.
-///
-/// `tuple` is used to sequence parsers together, so we can translate this directly
-/// and then map over it to transform the output into an `Expr::Function`
+/// Parse expressions
 fn parse_func<'a>(i: &'a str) -> IResult<&'a str, Expr, VerboseError<&'a str>> {
   let application_inner = map(preceded(multispace0, many0(parse_atom)), |head| {
     Expr::Function(head)
@@ -200,12 +175,7 @@ fn parse_func<'a>(i: &'a str) -> IResult<&'a str, Expr, VerboseError<&'a str>> {
   application_inner(i)
 }
 
-/// Because `Expr::If` and `Expr::IfElse` are so similar (we easily could have
-/// defined `Expr::If` to have an `Option` for the else block), we parse both
-/// in a single function.
-///
-/// In fact, we define our parser as if `Expr::If` was defined with an Option in it,
-/// we have the `opt` combinator which fits very nicely here.
+// TODO: If/else statments
 fn parse_if<'a>(i: &'a str) -> IResult<&'a str, Expr, VerboseError<&'a str>> {
   let if_inner = context(
     "if expression",
@@ -214,7 +184,7 @@ fn parse_if<'a>(i: &'a str) -> IResult<&'a str, Expr, VerboseError<&'a str>> {
         // here to avoid ambiguity with other names starting with `if`, if we added
         // variables to our language, we say that if must be terminated by at least
         // one whitespace character
-        terminated(tag("if"), multispace1),
+        terminated(tag(IF), multispace1),
         cut(tuple((parse_expr, parse_expr, opt(parse_expr)))),
       ),
       |(pred, true_branch, maybe_false_branch)| {
@@ -238,6 +208,7 @@ pub fn parse_expr<'a>(i: &'a str) -> IResult<&'a str, Expr, VerboseError<&'a str
 
 
 
+#[cfg(test)]
 mod tests {
     macro_rules! nom_eq {
     ($p:expr,$e:expr) => (
@@ -249,6 +220,7 @@ mod tests {
         Atom::Str(s.to_string())
     }
 
+    #[cfg(test)]
     fn atom_num(s: isize) -> Atom {
         Atom::Num(s as i128)
     }

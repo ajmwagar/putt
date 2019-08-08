@@ -1,20 +1,11 @@
-use std::{io, io::prelude::*, error::Error, fs::File, path::PathBuf};
+use std::error::Error;
 
 const DEBUG: bool = false;
 
-use nom::{
-    branch::alt,
-    bytes::complete::{tag, escaped},
-    character::complete::{alphanumeric1, alpha1, char, digit1, multispace0, multispace1, one_of},
-    combinator::{cut, map, map_res, opt},
-    error::{context, VerboseError},
-    multi::many0,
-    sequence::{delimited, preceded, terminated, tuple},
-    IResult,
-};
+use nom::error::VerboseError;
 
 use parser::*;
-use smaz::{compress,decompress};
+use smaz::{compress};
 
 pub mod parser;
 
@@ -102,7 +93,7 @@ impl Putt {
                     println!("Src: {:?}", self.src);
                 }
                 Ok(())
-            });
+            })?;
 
         Ok(())
 
@@ -139,7 +130,7 @@ impl Putt {
                 //     eval_expression(*false_branch)
                 //   }
                 // }
-                Expr::Function(mut head) => {
+                Expr::Function(head) => {
                     for atom in head {
                         self.stack.push(atom);
 
@@ -179,7 +170,7 @@ impl Putt {
                                     if self.stack.len() < 1 {
                                         // Err("Not enough variables in stack");
                                     } else {
-                                        let mut bo = self.stack.pop().unwrap();
+                                        let bo = self.stack.pop().unwrap();
                                         self.stack.push(Atom::Boolean(!get_bool_from_ref(&bo).unwrap()));
                                     }
                                 }
@@ -257,12 +248,12 @@ impl Putt {
     }
 
 
-    // TODO: Define output type
-    pub fn exec(program: &str) -> Vec<String> {
-        let mut putt = Putt::new();
-        putt.parse(program);
-        putt.run()
-    }
+    // // TODO: Define output type
+    // pub fn exec(program: &str) -> Vec<String> {
+    //     let mut putt = Putt::new();
+    //     putt.parse(program);
+    //     putt.run()
+    // }
 }
 
 mod test {
@@ -306,12 +297,12 @@ fn get_bool_from_ref(e: &Atom) -> Option<bool> {
     }
 }
 
+#[cfg(test)]
 mod tests {
-    use super::*;
+    use super::{Putt, Atom};
 
     macro_rules! putt_eq {
         ($p:expr,$e:expr) => {
-
             let mut putt = Putt::new();
             putt.parse($p);
             putt.eval_expression();

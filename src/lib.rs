@@ -299,3 +299,30 @@ fn get_bool_from_ref(e: &Atom) -> Option<bool> {
         None
     }
 }
+
+mod tests {
+    use super::*;
+
+    macro_rules! putt_eq {
+        ($p:expr,$e:expr) => {
+
+            let mut putt = Putt::new();
+            putt.parse($p);
+            putt.eval_expression();
+            assert_eq!(putt.stack.pop().unwrap(), $e)
+        }
+    }
+
+    /// Test expressions
+    #[test]
+    fn test_expr() {
+        putt_eq!("1 1+", Atom::Num(2));
+        putt_eq!("10 1+", Atom::Num(11));
+        putt_eq!("X 1+", Atom::Num(11));
+    }
+    /// Test string
+    #[test]
+    fn test_str() {
+        putt_eq!("\"Hi\"", Atom::Str("Hi".to_string()));
+    }
+}

@@ -266,6 +266,7 @@ mod tests {
         nom_eq!(parse_string("\"Hello, World\""), atom_str("Hello, World"));
     }
 
+    #[test]
     fn assert_roman() {
         nom_eq!(parse_roman("CMD"), atom_num(1400));
         nom_eq!(parse_roman("C"), atom_num(100));

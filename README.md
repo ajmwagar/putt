@@ -57,7 +57,7 @@ Modulo
 |`1` (and other digits) |int|`push(a)`|pushes `1` to stack|
 |`CMD`|int|`N/A`|converts roman numeral to hindu (`CMD >> 1400`) ans pushes to stack|
 |`"string literal"`|str|`push(a)`|pushes `"string literal"` to stack|
-|`\`compressed string literal\``|cmp_str|`push(a)`|decompresses & pushes `"string literal"` to stack|
+|\`compressed string literal\`|cmp_str|`push(a)`|decompresses & pushes `"string literal"` to stack|
 |`cmp`|compress|`pop(a)`|pops `a` then compresses then pushes `cmp(a)` to stack|
 |`+`|add|`pop(a,b)`|pops `a` then `b` then pushes `a+b` to stack|
 |`-`|sub|`pop(a,b)`|pops `a` then `b` then pushes `a-b` to stack|

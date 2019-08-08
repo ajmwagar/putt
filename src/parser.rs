@@ -33,7 +33,7 @@ const NUMERALS: [RomanNumeral; 19] = [
     RomanNumeral {symbol: "Ck",  value: 100_000},
     RomanNumeral {symbol: "Lk",  value: 50_000},
     RomanNumeral {symbol: "Xk",  value: 10_000},
-    RomanNumeral {symbol: "Vk",  value: 10_000},
+    RomanNumeral {symbol: "Vk",  value: 5_000},
     RomanNumeral {symbol: "M",  value: 1000},
     RomanNumeral {symbol: "CM", value: 900},
     RomanNumeral {symbol: "D",  value: 500},

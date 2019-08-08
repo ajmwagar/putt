@@ -68,6 +68,6 @@ Modulo
 |Symbol|Name|Pops|Description|
 |------|----|-----|-----------------------------------|
 |`?`|if|`pop(a, b, c)`|pops `a` (expression) then `b` and/or `c` (execs based on `a`)|
-|`|`|else|`pop(a, b, c)`| pops `a` (expression) then `b` and/or `c` (execs based on `a`)|
+|`\|`|else|`pop(a, b, c)`| pops `a` (expression) then `b` and/or `c` (execs based on `a`)|
 |`@`|loop|`N/A`| loops until break (`;`))|
 |`;`|break|`N/A`| breaks out of active loop)|

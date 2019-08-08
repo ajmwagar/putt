@@ -21,11 +21,12 @@ Hello, World!
 
 **This works though:**
 ```putt
-"Hello".
+"Hello",
 "World".
 ```
 ```
-HelloWorld
+Hello
+World
 ```
 
 ```putt

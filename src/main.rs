@@ -34,10 +34,10 @@ fn main() -> Result<(), Box<dyn Error>> {
         for line in stdin.lock().lines() {
             putt.parse(&line.unwrap())?;
             // Inject printing code at the end
-            if let Some(Expr::Function(mut src)) = putt.src {
-                src.push(Atom::BuiltIn(BuiltIn::PrintLn));
-                putt.src = Some(Expr::Function(src));
-            }
+            // if let Some(Expr::Function(mut src)) = putt.src {
+            //     src.push(Atom::BuiltIn(BuiltIn::PrintLn));
+            //     putt.src = Some(Expr::Function(src));
+            // }
 
             putt.eval_expression()?;
 

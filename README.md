@@ -55,6 +55,7 @@ Modulo
 |`,`|println|`pop(a)`|prints `a` to `stdout` (w/ newline)|
 |`.`|print|`pop(a)`|prints `a` to `stdout` (w/o newline)|
 |`1` (and other digits) |int|`push(a)`|pushes `1` to stack|
+|`CMD`|int|`N/A`|converts roman numeral to hindu (`CMD >> 1400`) ans pushes to stack|
 |`"string literal"`|str|`push(a)`|pushes `"string literal"` to stack|
 |`+`|add|`pop(a,b)`|pops `a` then `b` then pushes `a+b` to stack|
 |`-`|sub|`pop(a,b)`|pops `a` then `b` then pushes `a-b` to stack|

@@ -62,6 +62,7 @@ pub enum BuiltIn {
 
     // Keywords
     Not,
+    Print,
     PrintLn
 
 }
@@ -94,10 +95,14 @@ impl Putt {
     pub fn parse(&mut self, src: &str) -> Result<(), Box<dyn Error>> {
         parse_expr(src)
             .map_err(|e: nom::Err<VerboseError<&str>>| format!("{:#?}", e))
-            .and_then(|(_, exp)| { self.src = Some(exp); Ok(())});
-        if DEBUG {
-            println!("Src: {:?}", self.src);
-        }
+            .and_then(|(_, exp)| { 
+                self.src = Some(exp); 
+                if DEBUG {
+                    println!("Src: {:?}", self.src);
+                }
+                Ok(())
+            });
+
         Ok(())
 
     }

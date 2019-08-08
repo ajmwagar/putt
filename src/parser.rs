@@ -22,6 +22,34 @@ const ELSE: &str = "|";
 
 use super::*;
 
+pub struct RomanNumeral {
+    symbol: &'static str,
+    value: u32
+}
+ 
+const NUMERALS: [RomanNumeral; 13] = [
+    RomanNumeral {symbol: "M",  value: 1000},
+    RomanNumeral {symbol: "CM", value: 900},
+    RomanNumeral {symbol: "D",  value: 500},
+    RomanNumeral {symbol: "CD", value: 400},
+    RomanNumeral {symbol: "C",  value: 100},
+    RomanNumeral {symbol: "XC", value: 90},
+    RomanNumeral {symbol: "L",  value: 50},
+    RomanNumeral {symbol: "XL", value: 40},
+    RomanNumeral {symbol: "X",  value: 10},
+    RomanNumeral {symbol: "IX", value: 9},
+    RomanNumeral {symbol: "V",  value: 5},
+    RomanNumeral {symbol: "IV", value: 4},
+    RomanNumeral {symbol: "I",  value: 1}
+];
+ 
+pub fn from_roman(roman: &str) -> u32 {
+    match NUMERALS.iter().find(|num| roman.starts_with(num.symbol)) {
+        Some(num) => num.value + from_roman(&roman[num.symbol.len()..]),
+        None => 0, // if string empty, add nothing
+    }
+}
+
 
 /// Use nom to parse builtin operators
 fn parse_builtin_op<'a>(i: &'a str) -> IResult<&'a str, BuiltIn, VerboseError<&'a str>> {
@@ -108,6 +136,16 @@ fn parse_com_string<'a>(i: &'a str) -> IResult<&'a str, Atom, VerboseError<&'a s
 //     // Ok(("",i))
 // }
 
+fn parse_roman<'a>(i: &'a str) -> IResult<&'a str, Atom, VerboseError<&'a str>> {
+    map(context("roman numeral", preceded(multispace0, alpha1)), |numeral: &str| {
+        let num = from_roman(numeral) as Num;
+        if super::DEBUG {
+            println!("Roman: {} Hindu: {}", numeral, num);
+        }
+        Atom::Num(num)
+    })(i)
+}
+
 
 /// Parse an integer, either singed or unsigned
 fn parse_num<'a>(i: &'a str) -> IResult<&'a str, Atom, VerboseError<&'a str>> {
@@ -131,7 +169,7 @@ fn parse_float<'a>(i: &'a str) -> IResult<&'a str, Atom, VerboseError<&'a str>> 
 
 /// Parse atomics
 fn parse_atom<'a>(i: &'a str) -> IResult<&'a str, Atom, VerboseError<&'a str>> {
-    preceded(multispace0, alt((parse_string, parse_num, parse_bool, map(parse_builtin, Atom::BuiltIn), parse_keyword)))(i)
+    preceded(multispace0, alt((parse_string, parse_num, parse_bool, map(parse_builtin, Atom::BuiltIn), parse_roman)))(i)
 }
 
 

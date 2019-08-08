@@ -9,4 +9,4 @@ edition = "2018"
 [dependencies]
 structopt = "0.2"
 nom = "5"
-shoco-rs = { path = "../../shoco-rs" }
+smaz = "0.1.0"

@@ -1,5 +1,5 @@
-use shoco_rs::{decompress};
-// use std::io::prelude::*;
+use smaz::{decompress};
+use std::io::prelude::*;
 use nom::{
     branch::alt,
     bytes::complete::{is_not, tag},
@@ -65,7 +65,9 @@ const NUMERALS: [RomanNumeral; 25] = [
 
 // const CONSTANTS: [Constant; 1] = [
 //     Constant {symbol: "N", value: Atom::Str({
-//         String::from_utf8(std::io::stdin().bytes().map(|b| b.unwrap()).collect::<Vec<u8>>()).unwrap()
+//         let mut string = String::new();
+//         std::io::stdin().read_to_string(&mut string);
+//         string
 //     })}
 // ];
 
@@ -131,13 +133,13 @@ fn parse_string<'a>(i: &'a str) -> IResult<&'a str, Atom, VerboseError<&'a str>>
     res
 }
 
-/// Parse and decompress a shoco encoded string
+/// Parse and decompress a smaz encoded string
 fn parse_com_string<'a>(i: &'a str) -> IResult<&'a str, Atom, VerboseError<&'a str>> {
     if super::DEBUG {
         println!("String parser");
     }
     let res = map(context("string", delimited(ch('`'), is_not("`"), ch('`'))), |sym_str: &str| {
-        Atom::Str(decompress(sym_str.as_bytes()).to_string())
+        Atom::Str(String::from_utf8(decompress(sym_str.as_bytes()).unwrap()).unwrap())
     })(i);
     res
 }

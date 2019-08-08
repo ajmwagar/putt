@@ -1,8 +1,8 @@
 use nom::{
     is_a,
     branch::alt,
-    bytes::complete::{tag, escaped},
-    character::complete::{alphanumeric0, alpha1, char, digit1, multispace0, multispace1, one_of},
+    bytes::complete::{take, tag, escaped},
+    character::complete::{not_line_ending, alpha1, char as ch, digit1, multispace0, multispace1, one_of},
     number::complete::{double},
     combinator::{rest, cut, map, map_res, opt},
     error::{context, VerboseError},
@@ -105,22 +105,38 @@ fn parse_keyword<'a>(i: &'a str) -> IResult<&'a str, Atom, VerboseError<&'a str>
 }
 
 fn parse_string<'a>(i: &'a str) -> IResult<&'a str, Atom, VerboseError<&'a str>> {
-    map(context("string", delimited(
-                char('\"'),
-                alphanumeric0,
-                char('\"')
-    )), |sym_str: &str| {
-        if super::DEBUG {
-            println!("Str: {}", sym_str);
-        }
+    if super::DEBUG {
+        println!("String parser");
+    }
+    let res = map(context("string", preceded(ch('"'), parse_str)), |sym_str: &str| {
+        println!("Str: {}", sym_str);
         Atom::Str(sym_str.to_string())
-    })(i)
+    })(i);
+    println!("Res {:?}", res);
+    res
+}
+
+fn parse_str<'a>(i: &'a str) -> IResult<&'a str, &'a str, VerboseError<&'a str>> {
+    if super::DEBUG {
+        println!("Str parser");
+    }
+    let tmp_i: &'a str;
+    if i.contains("\"") {
+         tmp_i = i.trim_right_matches("\"");
+    }
+    else {
+        tmp_i = i;
+    }
+
+    let res = context("str", escaped(take(tmp_i.len()), '\\', one_of(r#""n\"#)))(tmp_i);
+    println!("Res {:?}", res);
+    res
 }
 
 fn parse_com_string<'a>(i: &'a str) -> IResult<&'a str, Atom, VerboseError<&'a str>> {
     map(context("string", delimited(
                 char('`'),
-                alphanumeric0,
+                not_line_ending,
                 char('`')
     )), |sym_str: &str| {
         if super::DEBUG {
@@ -129,11 +145,6 @@ fn parse_com_string<'a>(i: &'a str) -> IResult<&'a str, Atom, VerboseError<&'a s
         Atom::Str(sym_str.to_string())
     })(i)
 }
-
-// fn parse_str<'a>(i: &'a str) -> IResult<&'a str, &'a str, VerboseError<&'a str>> {
-//     // println!("Parse Str: {}", i);
-    
-//     // Ok(("",i))
 // }
 
 fn parse_roman<'a>(i: &'a str) -> IResult<&'a str, Atom, VerboseError<&'a str>> {
@@ -145,6 +156,7 @@ fn parse_roman<'a>(i: &'a str) -> IResult<&'a str, Atom, VerboseError<&'a str>> 
         Atom::Num(num)
     })(i)
 }
+
 
 
 /// Parse an integer, either singed or unsigned
@@ -169,7 +181,7 @@ fn parse_float<'a>(i: &'a str) -> IResult<&'a str, Atom, VerboseError<&'a str>> 
 
 /// Parse atomics
 fn parse_atom<'a>(i: &'a str) -> IResult<&'a str, Atom, VerboseError<&'a str>> {
-    preceded(multispace0, alt((parse_string, parse_num, parse_bool, map(parse_builtin, Atom::BuiltIn), parse_roman)))(i)
+    preceded(multispace0, alt((parse_num, parse_bool, parse_string, map(parse_builtin, Atom::BuiltIn), parse_roman)))(i)
 }
 
 

@@ -10,23 +10,11 @@ A **work in progress** stack-based, [code-golfing](https://en.wikipedia.org/wiki
 ## Example code 
 
 
-**Note: this is broken until I fix strings**
-
 ```putt
-"Hello, World!",
+"Hello, World!".
 ```
 ```
 Hello, World!
-```
-
-**This works though:**
-```putt
-"Hello",
-"World".
-```
-```
-Hello
-World
 ```
 
 ```putt
@@ -49,7 +37,7 @@ Modulo
 ```
 
 ## TODO:
-- [ ] Fix strings (right now Alphanumeric only (WTH Nom))
+- [x] Fix strings (~~right now~~ was Alphanumeric only) 
 - [ ] Compressable strings (save those bytes)
 - [ ] Add floating point operation
 - [ ] if (`?`), else (`|`), loop(`@`), break (`;`)

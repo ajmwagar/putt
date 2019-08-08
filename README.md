@@ -38,7 +38,7 @@ Modulo
 
 ## TODO:
 - [x] Fix strings (~~right now~~ was Alphanumeric only) 
-- [ ] Compressable strings (save those bytes)
+- [x] Compressable strings (save those bytes)
 - [ ] Add floating point operation
 - [ ] if (`?`), else (`|`), loop(`@`), break (`;`)
 - [ ] Arrays

@@ -34,13 +34,13 @@ fn main() -> Result<(), Box<dyn Error>> {
         // Start reading lines
         for line in stdin.lock().lines() {
             putt.parse(&line.unwrap())?;
-            // Inject printing code at the end
-            if let Some(Expr::Function(mut src)) = putt.src {
-                src.push(Atom::BuiltIn(BuiltIn::Print));
-                putt.src = Some(Expr::Function(src));
-            }
 
             putt.eval_expression()?;
+
+            // Inject printing code at the end
+            if let Some(atom) = putt.stack.last() {
+                print!("{}", atom);
+            }
 
             print!("\n>> ");
             io::stdout().flush()?;

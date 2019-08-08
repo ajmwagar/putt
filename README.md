@@ -66,6 +66,33 @@ Modulo
 |`%`|mod|`pop(a,b)`|pops `a` then `b` then pushes `a%b` to stack|
 |`!`|factorial|`pop(a)`|pops `a` then pushes `a!` to stack|
 
+#### Roman Numerals 
+|Symbol|Name|Pops|Description|
+|------|----|-----|-----------------------------------|
+|`Mk`|1 Million|`push(a)`|pushes `1_000_000` to stack|
+|`CMk`|900k|`push(a)`|pushes `900_000` to stack|
+|`Dk`|500k|`push(a)`|pushes `500_000` to stack|
+|`CDk`|400k|`push(a)`|pushes `400_000` to stack|
+|`Ck`|100k|`push(a)`|pushes `100_000` to stack|
+|`XCk`|90k|`push(a)`|pushes `90_000` to stack|
+|`Lk`|50k|`push(a)`|pushes `50_000` to stack|
+|`XLk`|40k|`push(a)`|pushes `40_000` to stack|
+|`Xk`|10k|`push(a)`|pushes `10_000` to stack|
+|`IXk`|9k|`push(a)`|pushes `9_000` to stack|
+|`Vk`|5k|`push(a)`|pushes `5_000` to stack|
+|`M`|1k|`push(a)`|pushes `1_000` to stack|
+|`CM`|900|`push(a)`|pushes `900` to stack|
+|`D`|500|`push(a)`|pushes `500` to stack|
+|`CD`|400|`push(a)`|pushes `400` to stack|
+|`XC`|90|`push(a)`|pushes `90` to stack|
+|`L`|50|`push(a)`|pushes `50` to stack|
+|`XL`|40|`push(a)`|pushes `40` to stack|
+|`X`|10|`push(a)`|pushes `10` to stack|
+|`IX`|9|`push(a)`|pushes `9` to stack|
+|`V`|5|`push(a)`|pushes `5` to stack|
+|`IV`|4|`push(a)`|pushes `4` to stack|
+|`I`|1|`push(a)`|pushes `1` to stack|
+
 
 ### Planned
 

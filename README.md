@@ -9,13 +9,24 @@ A **work in progress** stack-based, [code-golfing](https://en.wikipedia.org/wiki
 
 ## Example code 
 
+
+**Note: this is broken until I fix strings**
+
 ```putt
 "Hello, World!",
 ```
 ```
 Hello, World!
 ```
-**Note: this is broken until I fix strings**
+
+**This works though:**
+```putt
+"Hello".
+"World".
+```
+```
+HelloWorld
+```
 
 ```putt
 "WeCanDoMath",,"Times",10 8*,"Division",5 80/,"Addition",20 10+,"Subtraction",20 10-,"Modulo",10 20%,

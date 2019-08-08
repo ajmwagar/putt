@@ -1,6 +1,6 @@
 # Putt
 
-A **work in progress** stack-based, [code-golfing](https://en.wikipedia.org/wiki/Code_golf) language.
+A **work in progress** stack-based, [golfing](https://en.wikipedia.org/wiki/Code_golf) language.
 
 ## Goals
 - Easy to type (no copy-pasting unicode, **ever!**)

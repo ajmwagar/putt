@@ -18,6 +18,7 @@ const FALSE: &str = "#f";
 const NOT: &str = "n";
 const PRINTLN: &str = ",";
 const PRINT: &str = ".";
+const SQRT: &str = "r";
 const CMP: &str = "cmp";
 const DCMP: &str = "dmp";
 const IF: &str = "?";

@@ -19,6 +19,7 @@ const NOT: &str = "n";
 const PRINTLN: &str = ",";
 const PRINT: &str = ".";
 const CMP: &str = "cmp";
+const DCMP: &str = "dmp";
 const IF: &str = "?";
 const _ELSE: &str = "|";
 
@@ -83,7 +84,7 @@ pub fn from_roman(roman: &str) -> u128 {
 /// Use nom to parse builtin operators
 fn parse_builtin_op<'a>(i: &'a str) -> IResult<&'a str, BuiltIn, VerboseError<&'a str>> {
     // one_of matches one of the characters we give it
-    let (i, t) = one_of("+-*/=!^%")(i)?;
+    let (i, t) = one_of("R+-*/=!^%")(i)?;
 
     // because we are matching single character tokens, we can do the matching logic
     // on the returned value
@@ -97,6 +98,7 @@ fn parse_builtin_op<'a>(i: &'a str) -> IResult<&'a str, BuiltIn, VerboseError<&'
                 '=' => BuiltIn::Equal,
                 '!' => BuiltIn::Factorial,
                 '^' => BuiltIn::Power,
+                'R' => BuiltIn::Root,
                 '%' => BuiltIn::Modulus,
                 _ => unreachable!(),
             },
@@ -114,6 +116,7 @@ fn parse_builtin<'a>(i: &'a str) -> IResult<&'a str, BuiltIn, VerboseError<&'a s
             map(tag(PRINTLN), |_| BuiltIn::PrintLn),
             map(tag(PRINT), |_| BuiltIn::Print),
             map(tag(CMP), |_| BuiltIn::Cmp),
+            map(tag(DCMP), |_| BuiltIn::Dcmp),
             )), multispace0)(i)
 }
 
@@ -178,7 +181,7 @@ fn parse_float<'a>(i: &'a str) -> IResult<&'a str, Atom, VerboseError<&'a str>> 
 /// Parse atomics
 fn parse_atom<'a>(i: &'a str) -> IResult<&'a str, Atom, VerboseError<&'a str>> {
     // TODO: Delimite floating points
-    preceded(multispace0, alt((/*parse_float, */parse_num, parse_bool, parse_com_string, parse_string, map(parse_builtin, Atom::BuiltIn), parse_roman, )))(i)
+    preceded(multispace0, alt((/*parse_float,*/ parse_num, parse_bool, parse_com_string, parse_string, map(parse_builtin, Atom::BuiltIn), parse_roman, )))(i)
 }
 
 

@@ -5,59 +5,17 @@ const DEBUG: bool = false;
 use nom::error::VerboseError;
 
 use parser::*;
-use smaz::{compress};
+use smaz::{compress,decompress};
 
 pub mod parser;
+pub mod atom;
 
 pub type Num = i128;
 pub type Float = f64;
 
-#[derive(Debug, PartialEq, Clone)]
-pub enum Atom {
-    Num(Num),
-    Float(f64),
-    Keyword(String),
-    Str(String),
-    Boolean(bool),
-    BuiltIn(BuiltIn),
-}
+use atom::*;
 
-impl std::fmt::Display for Atom {
-    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
-        write!(f, "{}", match &self {
-            Atom::Num(num) => num.to_string(),
-            Atom::Boolean(bo) => bo.to_string(),
-            Atom::Str(st) => st.to_string(),
-            Atom::Float(f) => format!("{}", f),
-            Atom::Keyword(f) => format!("{}", f),
-            Atom::BuiltIn(bi) => match bi {
-                _ => unreachable!()
-            }
-        } .to_string())
-    }
 
-}
-
-/// Starting from the most basic, we define some built-in functions that our lisp has
-#[derive(Debug, PartialEq, Clone, Copy)]
-pub enum BuiltIn {
-    // Operators
-    Plus,
-    Minus,
-    Times,
-    Divide,
-    Equal,
-    Power,
-    Modulus,
-    Factorial,
-
-    // Keywords
-    Not,
-    Print,
-    PrintLn,
-    Cmp
-
-}
 #[derive(Debug, PartialEq, Clone)] pub enum Expr {
     Constant(Atom),
     /// (arg1 arg2...func-name)
@@ -140,101 +98,7 @@ impl Putt {
 
                         let top = self.stack.pop().unwrap();
                         if let Atom::BuiltIn(bi) = top {
-
-                            if DEBUG {
-                                println!("Executing command!");
-                            }
-                            match bi {
-                                BuiltIn::Plus => {
-                                    if self.stack.len() < 2 {
-                                        // Err("Not enough variables in stack");
-                                    } else {
-                                        // TODO: Graceful exit if not enough in stack
-                                        let a = get_num_from_atom(self.stack.pop().unwrap()).unwrap();
-                                        let b = get_num_from_atom(self.stack.pop().unwrap()).unwrap();
-                                        self.stack.push(Atom::Num(a + b));
-                                    }
-                                },
-                                BuiltIn::Times => {
-                                    if self.stack.len() < 2 {
-                                        // Err("Not enough variables in stack");
-                                    } else {
-                                        // TODO: Graceful exit if not enough in stack
-                                        let a = get_num_from_atom(self.stack.pop().unwrap()).unwrap();
-                                        let b = get_num_from_atom(self.stack.pop().unwrap()).unwrap();
-                                        self.stack.push(Atom::Num(a * b));
-                                    }
-                                },
-                                BuiltIn::Equal => self.stack.push(Atom::Boolean(self.stack.iter().zip(self.stack.iter().skip(1)).all(|(a, b)| a == b))),
-                                BuiltIn::Not => {
-                                    if self.stack.len() < 1 {
-                                        // Err("Not enough variables in stack");
-                                    } else {
-                                        let bo = self.stack.pop().unwrap();
-                                        self.stack.push(Atom::Boolean(!get_bool_from_ref(&bo).unwrap()));
-                                    }
-                                }
-                                BuiltIn::Minus => {
-                                    if self.stack.len() < 2 {
-                                        // Err("Not enough variables in stack");
-                                    } else {
-                                        // TODO: Graceful exit if not enough in stack
-                                        let a = get_num_from_atom(self.stack.pop().unwrap()).unwrap();
-                                        let b = get_num_from_atom(self.stack.pop().unwrap()).unwrap();
-                                        self.stack.push(Atom::Num(a - b));
-                                    }
-                                },
-                                BuiltIn::Divide => {
-                                    if self.stack.len() < 2 {
-                                        // Err("Not enough variables in stack");
-                                    } else {
-                                        // TODO: Graceful exit if not enough in stack
-                                        let a = get_num_from_atom(self.stack.pop().unwrap()).unwrap();
-                                        let b = get_num_from_atom(self.stack.pop().unwrap()).unwrap();
-                                        self.stack.push(Atom::Num(a / b));
-                                    }
-                                },
-                                BuiltIn::Power => {
-                                    if self.stack.len() < 2 {
-                                        // Err("Not enough variables in stack");
-                                    } else {
-                                        // TODO: Graceful exit if not enough in stack
-                                        let a = get_num_from_atom(self.stack.pop().unwrap()).unwrap();
-                                        let b = get_num_from_atom(self.stack.pop().unwrap()).unwrap();
-                                        self.stack.push(Atom::Num(a.pow(b as u32)));
-                                    }
-                                },
-                                BuiltIn::Modulus => {
-                                    if self.stack.len() < 2 {
-                                        // Err("Not enough variables in stack");
-                                    } else {
-                                        // TODO: Graceful exit if not enough in stack
-                                        let a = get_num_from_atom(self.stack.pop().unwrap()).unwrap();
-                                        let b = get_num_from_atom(self.stack.pop().unwrap()).unwrap();
-                                        self.stack.push(Atom::Num(a % b));
-                                    }
-                                },
-                                BuiltIn::Factorial => { 
-                                    if let Some(first_elem) = self.stack.pop() {
-                                        self.stack.push(Atom::Num(factorial(get_num_from_ref(&first_elem).unwrap())))
-                                    }
-                                },
-                                BuiltIn::PrintLn => {
-                                    if let Some(first_elem) = self.stack.pop() {
-                                        println!("{}", first_elem)
-                                    }
-                                }, 
-                                BuiltIn::Print => {
-                                    if let Some(first_elem) = self.stack.pop() {
-                                        print!("{} ", first_elem)
-                                    }
-                                },
-                                BuiltIn::Cmp => {
-                                    if let Some(Atom::Str(first_elem)) = self.stack.pop() {
-                                        self.stack.push(Atom::Str(String::from_utf8_lossy(&compress(first_elem.as_bytes())).to_string()))
-                                    }
-                                }
-                            } 
+                            bi.call(&mut self.stack);
                         } else {
                             self.stack.push(top);
                         }
@@ -256,12 +120,6 @@ impl Putt {
     // }
 }
 
-mod test {
-    #[test]
-    fn expressions() {
-        // assert_eq!()
-    }
-}
 
 fn factorial(num: Num) -> Num {
     match num {
@@ -314,9 +172,15 @@ mod tests {
     #[test]
     fn test_expr() {
         putt_eq!("1 1+", Atom::Num(2));
+        putt_eq!("1 1/", Atom::Num(1));
+        putt_eq!("10 1/", Atom::Num(10));
         putt_eq!("10 1+", Atom::Num(11));
         putt_eq!("X 1+", Atom::Num(11));
+        putt_eq!("2 3+11*1+", Atom::Num(56));
+        putt_eq!("\"Hi\"\"Hello!\"+", Atom::Str(String::from("HiHello!")));
+        putt_eq!("6!", Atom::Num(720));
     }
+
     /// Test string
     #[test]
     fn test_str() {

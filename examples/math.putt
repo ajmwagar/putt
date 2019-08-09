@@ -5,6 +5,6 @@
 "Addition: (909289 989898+) == ".909289 989898+,
 "Subtraction: (989898 1-) == ".989898 1-,
 "Modulus: (9900 989898%) == ".9900 989898%,
-"Exponents: (2 989898^) == ".2 989898^,
+"Exponents: (989898 2^) == ".989898 2^,
 "Factorial: (30!) == ".XXX!,
 "ROMAN NUMERALS: (CMD, X, Mk, IV, LkI) == ".CMD.X.Mk.IV.LkI ,

@@ -28,7 +28,7 @@ use super::*;
 
 pub struct RomanNumeral {
     symbol: &'static str,
-    value: u128
+    value: u64
 }
 
  
@@ -74,7 +74,7 @@ const NUMERALS: [RomanNumeral; 25] = [
 // ];
 
  
-pub fn from_roman(roman: &str) -> u128 {
+pub fn from_roman(roman: &str) -> u64 {
     match NUMERALS.iter().find(|num| roman.starts_with(num.symbol)) {
         Some(num) => num.value + from_roman(&roman[num.symbol.len()..]),
         None => 0, // if string empty, add nothing
@@ -155,19 +155,19 @@ fn parse_roman<'a>(i: &'a str) -> IResult<&'a str, Atom, VerboseError<&'a str>> 
         if super::DEBUG {
             println!("Roman: {} Hindu: {}", numeral, num);
         }
-        Atom::Num(num)
+        Atom::Float(num as f64)
     })(i)
 }
 
-/// Parse an integer, either singed or unsigned
-fn parse_num<'a>(i: &'a str) -> IResult<&'a str, Atom, VerboseError<&'a str>> {
-    alt((
-            map_res(digit1, |digit_str: &str| digit_str.parse::<Num>().map(Atom::Num)),
-            map(preceded(tag("-"), digit1), |digit_str: &str| {
-                Atom::Num(-1 * digit_str.parse::<Num>().unwrap())
-            }),
-            ))(i)
-}
+// /// Parse an integer, either singed or unsigned
+// fn parse_num<'a>(i: &'a str) -> IResult<&'a str, Atom, VerboseError<&'a str>> {
+//     alt((
+//             map_res(digit1, |digit_str: &str| digit_str.parse::<Num>().map(Atom::Num)),
+//             map(preceded(tag("-"), digit1), |digit_str: &str| {
+//                 Atom::Num(-1 * digit_str.parse::<Num>().unwrap())
+//             }),
+//             ))(i)
+// }
 
 /// Parse a floating point number
 fn parse_float<'a>(i: &'a str) -> IResult<&'a str, Atom, VerboseError<&'a str>> {
@@ -242,7 +242,7 @@ mod tests {
 
     #[cfg(test)]
     fn atom_num(s: isize) -> Atom {
-        Atom::Num(s as i128)
+        Atom::Float(s as f64)
     }
 
     use super::*;

@@ -35,7 +35,6 @@ use super::*;
 
 #[derive(Debug, PartialEq, Clone)]
 pub enum Atom {
-    Num(Num),
     Float(Float),
     Keyword(String),
     Str(String),
@@ -48,7 +47,6 @@ impl std::ops::Add for Atom {
     type Output = Self;
     fn add(self, rhs: Atom) -> Self {
         match (self, rhs) {
-            (Atom::Num(lhs), Atom::Num(rhs)) => Atom::Num(lhs + rhs),
             (Atom::Float(lhs), Atom::Float(rhs)) => Atom::Float(lhs + rhs),
             (Atom::Str(lhs), Atom::Str(rhs)) => Atom::Str(format!("{}{}", lhs, rhs)),
             (_, _) => panic!("I can't add those types")
@@ -60,7 +58,6 @@ impl std::ops::Sub for Atom {
     type Output = Self;
     fn sub(self, rhs: Atom) -> Self {
         match (self, rhs) {
-            (Atom::Num(lhs), Atom::Num(rhs)) => Atom::Num(lhs - rhs),
             (Atom::Float(lhs), Atom::Float(rhs)) => Atom::Float(lhs - rhs),
             // (Atom::Str(lhs), Atom::Str(rhs)) => Atom::Str(format!("{}{}", lhs, rhs)),
             (_, _) => panic!("I can't subtract those types")
@@ -72,7 +69,6 @@ impl std::ops::Mul for Atom {
     type Output = Self;
     fn mul(self, rhs: Atom) -> Self {
         match (self, rhs) {
-            (Atom::Num(lhs), Atom::Num(rhs)) => Atom::Num(lhs * rhs),
             (Atom::Float(lhs), Atom::Float(rhs)) => Atom::Float(lhs * rhs),
             // (Atom::Str(lhs), Atom::Str(rhs)) => Atom::Str(format!("{}{}", lhs, rhs)),
             (_, _) => panic!("I can't multiply those types")
@@ -84,7 +80,6 @@ impl std::ops::Div for Atom {
     type Output = Self;
     fn div(self, rhs: Atom) -> Self {
         match (self, rhs) {
-            (Atom::Num(lhs), Atom::Num(rhs)) => Atom::Num(lhs / rhs),
             (Atom::Float(lhs), Atom::Float(rhs)) => Atom::Float(lhs / rhs),
             // (Atom::Str(lhs), Atom::Str(rhs)) => Atom::Str(format!("{}{}", lhs, rhs)),
             (_, _) => panic!("I can't divide those types")
@@ -95,10 +90,7 @@ impl std::ops::Div for Atom {
 impl Atom {
     fn pow(self, rhs: Atom) -> Self {
         match (self, rhs) {
-            (Atom::Num(lhs), Atom::Num(rhs)) => Atom::Num(lhs.pow(rhs as u32)),
             (Atom::Float(lhs), Atom::Float(rhs)) => Atom::Float(lhs.powf(rhs)),
-            (Atom::Num(lhs), Atom::Float(rhs)) => Atom::Float((lhs as Float).powf(rhs)),
-            (Atom::Float(lhs), Atom::Num(rhs)) => Atom::Float(lhs.powf(rhs as Float)),
             // (Atom::Str(lhs), Atom::Str(rhs)) => Atom::Str(format!("{}{}", lhs, rhs)),
             (_, _) => panic!("I can't raise those types")
         }
@@ -106,7 +98,6 @@ impl Atom {
 
     fn modu(self, rhs: Atom) -> Self {
         match (self, rhs) {
-            (Atom::Num(lhs), Atom::Num(rhs)) => Atom::Num(lhs % rhs),
             (Atom::Float(lhs), Atom::Float(rhs)) => Atom::Float(lhs % rhs),
             // (Atom::Str(lhs), Atom::Str(rhs)) => Atom::Str(format!("{}{}", lhs, rhs)),
             (_, _) => panic!("I can't mod those types")
@@ -115,8 +106,7 @@ impl Atom {
 
     fn fact(self) -> Self {
         match self {
-            Atom::Num(lhs)=> Atom::Num(factorial(lhs)),
-            Atom::Float(lhs)=> Atom::Float(factorial(lhs as Num) as Float),
+            Atom::Float(lhs)=> Atom::Float(factorial(lhs) as Float),
             // (Atom::Str(lhs), Atom::Str(rhs)) => Atom::Str(format!("{}{}", lhs, rhs)),
             _ => panic!("I can't factorial those types")
         }
@@ -127,7 +117,7 @@ impl Atom {
 impl std::fmt::Display for Atom {
     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
         write!(f, "{}", match &self {
-            Atom::Num(num) => num.to_string(),
+            // Atom::Num(num) => num.to_string(),
             Atom::Boolean(bo) => bo.to_string(),
             Atom::Str(st) => st.to_string(),
             Atom::Float(f) => format!("{}", f),
@@ -200,8 +190,8 @@ impl BuiltIn {
                 }
             },
             Root => {
-                if let Some(Atom::Num(b)) = stack.pop() {
-                    stack.push(Atom::Float((b as Float).sqrt()));
+                if let Some(Atom::Float(b)) = stack.pop() {
+                    stack.push(Atom::Float(b.sqrt()));
                 }
             },
             Modulus => {

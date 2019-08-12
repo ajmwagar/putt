@@ -36,10 +36,11 @@ use super::*;
 #[derive(Debug, PartialEq, Clone)]
 pub enum Atom {
     Num(Num),
-    Float(f64),
+    Float(Float),
     Keyword(String),
     Str(String),
     Boolean(bool),
+    Arr(Vec<Atom>),
     BuiltIn(BuiltIn),
 }
 
@@ -96,8 +97,8 @@ impl Atom {
         match (self, rhs) {
             (Atom::Num(lhs), Atom::Num(rhs)) => Atom::Num(lhs.pow(rhs as u32)),
             (Atom::Float(lhs), Atom::Float(rhs)) => Atom::Float(lhs.powf(rhs)),
-            (Atom::Num(lhs), Atom::Float(rhs)) => Atom::Float((lhs as f64).powf(rhs)),
-            (Atom::Float(lhs), Atom::Num(rhs)) => Atom::Float(lhs.powf(rhs as f64)),
+            (Atom::Num(lhs), Atom::Float(rhs)) => Atom::Float((lhs as Float).powf(rhs)),
+            (Atom::Float(lhs), Atom::Num(rhs)) => Atom::Float(lhs.powf(rhs as Float)),
             // (Atom::Str(lhs), Atom::Str(rhs)) => Atom::Str(format!("{}{}", lhs, rhs)),
             (_, _) => panic!("I can't raise those types")
         }
@@ -115,7 +116,7 @@ impl Atom {
     fn fact(self) -> Self {
         match self {
             Atom::Num(lhs)=> Atom::Num(factorial(lhs)),
-            Atom::Float(lhs)=> Atom::Float(factorial(lhs as i128) as f64),
+            Atom::Float(lhs)=> Atom::Float(factorial(lhs as Num) as Float),
             // (Atom::Str(lhs), Atom::Str(rhs)) => Atom::Str(format!("{}{}", lhs, rhs)),
             _ => panic!("I can't factorial those types")
         }
@@ -133,7 +134,8 @@ impl std::fmt::Display for Atom {
             Atom::Keyword(f) => format!("{}", f),
             Atom::BuiltIn(bi) => match bi {
                 _ => unreachable!()
-            }
+            },
+            _ => "".to_string()
         } .to_string())
     }
 
@@ -188,7 +190,9 @@ impl BuiltIn {
                 }
             },
             Equal => {
-                stack.push(Atom::Boolean(stack.iter().zip(stack.iter().skip(1)).all(|(a, b)| a == b)))
+                if let (Some(b), Some(a)) = (stack.pop(), stack.pop()) {
+                    stack.push(Atom::Boolean(a == b));
+                }
             },
             Power => {
                 if let (Some(b), Some(a)) = (stack.pop(), stack.pop()) {
@@ -197,7 +201,7 @@ impl BuiltIn {
             },
             Root => {
                 if let Some(Atom::Num(b)) = stack.pop() {
-                    stack.push(Atom::Float((b as f64).sqrt()));
+                    stack.push(Atom::Float((b as Float).sqrt()));
                 }
             },
             Modulus => {
@@ -229,7 +233,7 @@ impl BuiltIn {
             },
             Cmp => {
                 if let Some(Atom::Str(first_elem)) = stack.pop() {
-                    stack.push(Atom::Str(String::from_utf8_lossy(&compress(first_elem.as_bytes())).to_string()))
+                    stack.push(Atom::Str(unsafe {String::from_utf8_unchecked(compress(first_elem.as_bytes()))}))
                 }
             },
             Dcmp => {

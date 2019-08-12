@@ -17,7 +17,7 @@ const TRUE: &str = "#t";
 const FALSE: &str = "#f";
 const NOT: &str = "n";
 const PRINTLN: &str = ",";
-const PRINT: &str = ".";
+const PRINT: &str = "P";
 const SQRT: &str = "r";
 const CMP: &str = "cmp";
 const DCMP: &str = "dmp";
@@ -182,7 +182,7 @@ fn parse_float<'a>(i: &'a str) -> IResult<&'a str, Atom, VerboseError<&'a str>> 
 /// Parse atomics
 fn parse_atom<'a>(i: &'a str) -> IResult<&'a str, Atom, VerboseError<&'a str>> {
     // TODO: Delimite floating points
-    preceded(multispace0, alt((/*parse_float,*/ parse_num, parse_bool, parse_com_string, parse_string, map(parse_builtin, Atom::BuiltIn), parse_roman, )))(i)
+    preceded(multispace0, alt((parse_float,parse_bool, parse_com_string, parse_string, map(parse_builtin, Atom::BuiltIn), parse_roman, )))(i)
 }
 
 

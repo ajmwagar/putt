@@ -38,12 +38,12 @@ Modulo
 
 ## TODO:
 - [x] Fix strings (~~right now~~ was Alphanumeric only) 
-- [x] Compressable strings (save those bytes)
-- [ ] Add floating point operation
+- [x] Compressable strings (save those bytes) (Kinda broken rn)
+- [X] Add floating point operation
 - [ ] if (`?`), else (`|`), loop(`@`), break (`;`)
 - [ ] Arrays
 - [ ] Std input (Std output is done)
-- [ ] A crap-load of functions
+- [ ] A crap-load of high level functions
 
 
 ## Token reference 
@@ -53,7 +53,7 @@ Modulo
 |Symbol|Name|Pops|Description|
 |------|----|-----|-----------------------------------|
 |`,`|println|`pop(a)`|prints `a` to `stdout` (w/ newline)|
-|`.`|print|`pop(a)`|prints `a` to `stdout` (w/o newline)|
+|`P`|print|`pop(a)`|prints `a` to `stdout` (w/o newline)|
 |`1` (and other digits) |int|`push(a)`|pushes `1` to stack|
 |`CMD`|int|`N/A`|converts roman numeral to hindu (`CMD >> 1400`) ans pushes to stack|
 |`"string literal"`|str|`push(a)`|pushes `"string literal"` to stack|

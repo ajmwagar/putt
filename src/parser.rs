@@ -85,7 +85,7 @@ pub fn from_roman(roman: &str) -> u64 {
 /// Use nom to parse builtin operators
 fn parse_builtin_op<'a>(i: &'a str) -> IResult<&'a str, BuiltIn, VerboseError<&'a str>> {
     // one_of matches one of the characters we give it
-    let (i, t) = one_of("R+-*/=!^%")(i)?;
+    let (i, t) = one_of("PR+-*/=!^%")(i)?;
 
     // because we are matching single character tokens, we can do the matching logic
     // on the returned value
@@ -100,6 +100,7 @@ fn parse_builtin_op<'a>(i: &'a str) -> IResult<&'a str, BuiltIn, VerboseError<&'
                 '!' => BuiltIn::Factorial,
                 '^' => BuiltIn::Power,
                 'R' => BuiltIn::Root,
+                'P' => BuiltIn::Print,
                 '%' => BuiltIn::Modulus,
                 _ => unreachable!(),
             },
@@ -115,7 +116,6 @@ fn parse_builtin<'a>(i: &'a str) -> IResult<&'a str, BuiltIn, VerboseError<&'a s
             // so we ignore the input and return the BuiltIn directly
             map(tag(NOT), |_| BuiltIn::Not),
             map(tag(PRINTLN), |_| BuiltIn::PrintLn),
-            map(tag(PRINT), |_| BuiltIn::Print),
             map(tag(CMP), |_| BuiltIn::Cmp),
             map(tag(DCMP), |_| BuiltIn::Dcmp),
             )), multispace0)(i)

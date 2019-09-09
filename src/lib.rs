@@ -131,7 +131,7 @@ fn factorial(num: Float) -> Float {
 
 // /// To start we define a couple of helper functions
 // fn get_num_from_ref(e: &Atom) -> Option<Num> {
-//     if let Atom::Num(n) = e {
+//     if let Atom::Float(n) = e {
 //         Some(*n)
 //     } else {
 //         None
@@ -140,7 +140,7 @@ fn factorial(num: Float) -> Float {
 
 // /// To start we define a couple of helper functions
 // fn get_num_from_atom(e: Atom) -> Option<Num> {
-//     if let Atom::Num(n) = e {
+//     if let Atom::Float(n) = e {
 //         Some(n)
 //     } else {
 //         None
@@ -171,14 +171,14 @@ mod tests {
     /// Test expressions
     #[test]
     fn test_expr() {
-        putt_eq!("1 1+", Atom::Num(2));
-        putt_eq!("1 1/", Atom::Num(1));
-        putt_eq!("10 1/", Atom::Num(10));
-        putt_eq!("10 1+", Atom::Num(11));
-        putt_eq!("X 1+", Atom::Num(11));
-        putt_eq!("2 3+11*1+", Atom::Num(56));
+        putt_eq!("1 1+", Atom::Float(2.0));
+        putt_eq!("1 1/", Atom::Float(1.0));
+        putt_eq!("10 1/", Atom::Float(10.0));
+        putt_eq!("10 1+", Atom::Float(11.0));
+        putt_eq!("X 1+", Atom::Float(11.0));
+        putt_eq!("2 3+11*1+", Atom::Float(34.0));
         putt_eq!("\"Hi\"\"Hello!\"+", Atom::Str(String::from("HiHello!")));
-        putt_eq!("6!", Atom::Num(720));
+        putt_eq!("6!", Atom::Float(720.0));
     }
 
     /// Test string

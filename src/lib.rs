@@ -162,8 +162,8 @@ mod tests {
     macro_rules! putt_eq {
         ($p:expr,$e:expr) => {
             let mut putt = Putt::new();
-            putt.parse($p);
-            putt.eval_expression();
+            putt.parse($p).unwrap();
+            putt.eval_expression().unwrap();
             assert_eq!(putt.stack.pop().unwrap(), $e)
         }
     }
@@ -174,6 +174,9 @@ mod tests {
         putt_eq!("1 1+", Atom::Float(2.0));
         putt_eq!("1 1/", Atom::Float(1.0));
         putt_eq!("10 1/", Atom::Float(10.0));
+        putt_eq!("10 1s", Atom::Float(10.0));
+        putt_eq!("10 1ss", Atom::Float(1.0));
+        putt_eq!("10 1x", Atom::Float(10.0));
         putt_eq!("10 1+", Atom::Float(11.0));
         putt_eq!("X 1+", Atom::Float(11.0));
         putt_eq!("2 3+11*1+", Atom::Float(34.0));

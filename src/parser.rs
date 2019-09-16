@@ -19,6 +19,10 @@ const NOT: &str = "n";
 const PRINTLN: &str = ",";
 const PRINT: &str = "P";
 const SQRT: &str = "r";
+const SWAP: &str = "s";
+const DUPE: &str = "d";
+const CLEAR: &str = "c";
+const DROP: &str = "x";
 const CMP: &str = "cmp";
 const DCMP: &str = "dmp";
 const IF: &str = "?";
@@ -118,6 +122,10 @@ fn parse_builtin<'a>(i: &'a str) -> IResult<&'a str, BuiltIn, VerboseError<&'a s
             map(tag(PRINTLN), |_| BuiltIn::PrintLn),
             map(tag(CMP), |_| BuiltIn::Cmp),
             map(tag(DCMP), |_| BuiltIn::Dcmp),
+            map(tag(SWAP), |_| BuiltIn::Swap),
+            map(tag(DUPE), |_| BuiltIn::Dupe),
+            map(tag(DROP), |_| BuiltIn::Drop),
+            map(tag(CLEAR), |_| BuiltIn::Clear),
             )), multispace0)(i)
 }
 

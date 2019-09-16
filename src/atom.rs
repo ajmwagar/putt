@@ -145,6 +145,11 @@ pub enum BuiltIn {
     Modulus,
     Factorial,
 
+    Swap,
+    Dupe,
+    Drop,
+    Clear,
+
     // Keywords
     Not,
     Print,
@@ -203,6 +208,25 @@ impl BuiltIn {
                 if let Some(a) = stack.pop() {
                     stack.push(a.fact());
                 }
+            },
+            Swap => {
+                if let (Some(b), Some(a)) = (stack.pop(), stack.pop()) {
+                    stack.push(b);
+                    stack.push(a);
+                }
+            },
+            Dupe => {
+                if let Some(a) = stack.last() {
+                    stack.push(a.clone())
+                }
+            },
+            Drop => {
+                if let Some(a) = stack.pop() {
+
+                }
+            }
+            Clear => {
+                *stack = Vec::new();
             },
 
             // Keywords

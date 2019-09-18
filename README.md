@@ -73,6 +73,8 @@ Modulo
 |`*`|multi|`pop(a,b)`|pops `a` then `b` then pushes `a*b` to stack|
 |`%`|mod|`pop(a,b)`|pops `a` then `b` then pushes `a%b` to stack|
 |`!`|factorial|`pop(a)`|pops `a` then pushes `a!` to stack|
+|`^`|power|`pop(a,b)`|pops `a` then `b` then pushes `a^b` to stack|
+|`R`|root|`pop(a)`|returns the square root of `a`|
 |`N`|negate|`pop(a)`|pops `a` then pushes `a * -1` to stack|
 |`A`|absolute|`pop(a)`|pops `a` then pushes `abs(a)` to stack|
 |`x`|drop|`pop(a)`| |

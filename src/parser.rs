@@ -16,7 +16,9 @@ use nom::{
 const TRUE: &str = "#t";
 const FALSE: &str = "#f";
 const NOT: &str = "n";
+const NEG: &str = "N";
 const PRINTLN: &str = ",";
+const ABS: &str = "A";
 const PRINT: &str = "P";
 const SQRT: &str = "r";
 const SWAP: &str = "s";
@@ -118,6 +120,8 @@ fn parse_builtin<'a>(i: &'a str) -> IResult<&'a str, BuiltIn, VerboseError<&'a s
             parse_builtin_op,
             // map lets us process the parsed output, in this case we know what we parsed,
             // so we ignore the input and return the BuiltIn directly
+            map(tag(ABS), |_| BuiltIn::Abs),
+            map(tag(NEG), |_| BuiltIn::Negate),
             map(tag(NOT), |_| BuiltIn::Not),
             map(tag(PRINTLN), |_| BuiltIn::PrintLn),
             map(tag(CMP), |_| BuiltIn::Cmp),

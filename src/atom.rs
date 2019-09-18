@@ -144,7 +144,10 @@ pub enum BuiltIn {
     Root,
     Modulus,
     Factorial,
+    Negate,
+    Abs,
 
+    // Stack operators
     Swap,
     Dupe,
     Drop,
@@ -209,6 +212,16 @@ impl BuiltIn {
                     stack.push(a.fact());
                 }
             },
+            Negate => {
+                if let Some(Atom::Float(a)) = stack.pop() {
+                    stack.push(Atom::Float(-1.0 * a));
+                }
+            },
+            Abs => {
+                if let Some(Atom::Float(a)) = stack.pop() {
+                    stack.push(Atom::Float(a.abs()))
+                }
+            }
             Swap => {
                 if let (Some(b), Some(a)) = (stack.pop(), stack.pop()) {
                     stack.push(b);

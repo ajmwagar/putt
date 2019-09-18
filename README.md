@@ -7,6 +7,14 @@ A **work in progress** stack-based, [golfing](https://en.wikipedia.org/wiki/Code
 - Turing-completeness
 - Use minimal resources
 
+## Usage
+
+### REPL
+`cargo run --release`
+
+### From file
+`cargo run --release -- <file>`
+
 ## Example code 
 
 

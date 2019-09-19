@@ -7,6 +7,14 @@ A **work in progress** stack-based, [golfing](https://en.wikipedia.org/wiki/Code
 - Turing-completeness
 - Use minimal resources
 
+## Usage
+
+### REPL
+`cargo run --release`
+
+### From file
+`cargo run --release -- <file>`
+
 ## Example code 
 
 
@@ -65,6 +73,14 @@ Modulo
 |`*`|multi|`pop(a,b)`|pops `a` then `b` then pushes `a*b` to stack|
 |`%`|mod|`pop(a,b)`|pops `a` then `b` then pushes `a%b` to stack|
 |`!`|factorial|`pop(a)`|pops `a` then pushes `a!` to stack|
+|`^`|power|`pop(a,b)`|pops `a` then `b` then pushes `a^b` to stack|
+|`R`|root|`pop(a)`|returns the square root of `a`|
+|`N`|negate|`pop(a)`|pops `a` then pushes `a * -1` to stack|
+|`A`|absolute|`pop(a)`|pops `a` then pushes `abs(a)` to stack|
+|`x`|drop|`pop(a)`| |
+|`s`|swap|`pop(a,b)`|pops `a,b` then pushes `b,a` to stack|
+|`d`|dupe|`push(pop(a))`|clones `pop(a)` and pushes it to stack|
+|`c`|clear|`pop(all)`|clears the stack|
 
 #### Roman Numerals 
 |Symbol|Name|Pops|Description|

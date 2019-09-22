@@ -1,6 +1,6 @@
 use std::error::Error;
 
-const DEBUG: bool = false;
+const DEBUG: bool = true;
 
 use nom::error::VerboseError;
 
@@ -30,7 +30,11 @@ use atom::*;
 pub struct Putt {
     /// Memory of Putt VM
     pub stack: Vec<Atom>,
-    pub src: Option<Expr>
+    pub src: Option<Expr>,
+    /// Instructions
+    pub inst: Vec<Atom>,
+    /// Program counter, used for jumps
+    pub pc: usize
 }
 
 impl Putt {
@@ -38,7 +42,9 @@ impl Putt {
     pub fn new() -> Self {
         Putt {
             stack: Vec::new(),
-            src: None
+            src: None,
+            inst: Vec::new(),
+            pc: 0
         }
     }
 
@@ -90,18 +96,21 @@ impl Putt {
                 // }
                 Expr::Function(head) => {
                     for atom in head {
-                        self.stack.push(atom);
+                        self.inst.push(atom);
 
                         if DEBUG {
                             println!("Stack Dump: {:?}", self.stack);
                         }
 
-                        let top = self.stack.pop().unwrap();
+                        let top = self.inst.get_mut(self.pc).unwrap().clone();
                         if let Atom::BuiltIn(bi) = top {
                             bi.call(&mut self.stack);
+                            self.pc += 1;
                         } else {
                             self.stack.push(top);
+                            self.pc += 1;
                         }
+
                     }
                 },
                 _ => unreachable!()

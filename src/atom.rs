@@ -126,7 +126,7 @@ impl std::fmt::Display for Atom {
                 f.iter().map(|x| format!("{}", x)).collect::<Vec<String>>().join(" ")
             },
             Atom::BuiltIn(bi) => match bi {
-                _ => unreachable!()
+                _ => "BuiltIn".to_string()
             },
             _ => "".to_string()
         } .to_string())
@@ -162,7 +162,8 @@ pub enum BuiltIn {
     Print,
     PrintLn,
     Cmp,
-    Dcmp
+    Dcmp,
+    InChar,
 
 }
 
@@ -295,7 +296,8 @@ impl BuiltIn {
                     let atom = Atom::Str(String::from_utf8(decompress(sym_str.as_bytes()).unwrap()).unwrap());
                     stack.push(atom);
                 }
-            }
+            },
+            InChar => {},
         }
     }
 }

@@ -25,18 +25,20 @@ fn main() -> Result<(), Box<dyn Error>> {
         putt.parse(&fstring)?;
         putt.eval_expression()?;
 
-        if let Some(atom) = putt.stack.last() {
+        // Inject printing code at the end
+        if let Some(atom) = putt.inst.last() {
             match atom {
                 Atom::BuiltIn(b) => {
                     match b {
                         BuiltIn::Print => {},
                         BuiltIn::PrintLn => {},
-                        _ => println!("{}", atom)
+                        _ => println!("{}", putt.stack.last().unwrap())
                     }
                 }
                 _ => println!("{}", atom)
             }
         }
+
         // println!("{:?}", putt.stack.pop());
     }
     else {
@@ -52,13 +54,13 @@ fn main() -> Result<(), Box<dyn Error>> {
             putt.eval_expression()?;
 
             // Inject printing code at the end
-            if let Some(atom) = putt.stack.last() {
+            if let Some(atom) = putt.inst.last() {
                 match atom {
                     Atom::BuiltIn(b) => {
                         match b {
                             BuiltIn::Print => {},
                             BuiltIn::PrintLn => {},
-                            _ => println!("{}", atom)
+                            _ => println!("{}", putt.stack.last().unwrap())
                         }
                     }
                     _ => println!("{}", atom)

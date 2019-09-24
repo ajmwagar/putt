@@ -78,7 +78,10 @@ Modulo
 |`R`|root|`pop(a)`|returns the square root of `a`|
 |`N`|negate|`pop(a)`|pops `a` then pushes `a * -1` to stack|
 |`A`|absolute|`pop(a)`|pops `a` then pushes `abs(a)` to stack|
-|`x`|drop|`pop(a)`| |
+|`S`|sum|`pop(a)`| pops `a` then sums `a` number of values from the stack|
+|`G`|avg|`pop(a)`| pops `a` then averages `a` number of values from the stack|
+|`~`|len|`push(a)`| pushes the current length of the stack|
+|`x`|drop|`pop(a)`| pops `a` |
 |`s`|swap|`pop(a,b)`|pops `a,b` then pushes `b,a` to stack|
 |`d`|dupe|`push(pop(a))`|clones `pop(a)` and pushes it to stack|
 |`c`|clear|`pop(all)`|clears the stack|

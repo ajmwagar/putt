@@ -16,14 +16,18 @@ use nom::{
 const TRUE: &str = "#t";
 const FALSE: &str = "#f";
 const NOT: &str = "n";
+const JMP: &str = "J";
 
 const ABS: &str = "A";
 const NEG: &str = "N";
 const RANGE: &str = ":";
+const SUM: &str = "S";
+const AVG: &str = "G";
 
 const PRINTLN: &str = ",";
 const PRINT: &str = "P";
 
+const LEN: &str = "~";
 const SWAP: &str = "s";
 const DUPE: &str = "d";
 const CLEAR: &str = "c";
@@ -124,8 +128,12 @@ fn parse_builtin<'a>(i: &'a str) -> IResult<&'a str, BuiltIn, VerboseError<&'a s
             parse_builtin_op,
             // map lets us process the parsed output, in this case we know what we parsed,
             // so we ignore the input and return the BuiltIn directly
+            map(tag(JMP), |_| BuiltIn::Jmp),
             map(tag(ABS), |_| BuiltIn::Abs),
             map(tag(NEG), |_| BuiltIn::Negate),
+            map(tag(LEN), |_| BuiltIn::Len),
+            map(tag(AVG), |_| BuiltIn::Avg),
+            map(tag(SUM), |_| BuiltIn::Sum),
             map(tag(RANGE), |_| BuiltIn::Range),
             map(tag(NOT), |_| BuiltIn::Not),
             map(tag(PRINTLN), |_| BuiltIn::PrintLn),
@@ -141,7 +149,7 @@ fn parse_builtin<'a>(i: &'a str) -> IResult<&'a str, BuiltIn, VerboseError<&'a s
 
 /// Our boolean values are also constant, so we can do it the same way
 fn parse_bool<'a>(i: &'a str) -> IResult<&'a str, Atom, VerboseError<&'a str>> {
-    alt((map(tag(TRUE), |_| Atom::Boolean(true)), map(tag(FALSE), |_| Atom::Boolean(false))))(i)
+    alt((map(tag(TRUE), |_| Atom::Float(1.0)), map(tag(FALSE), |_| Atom::Float(0.0))))(i)
 }
 
 /// Parse string literal

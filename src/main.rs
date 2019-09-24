@@ -32,7 +32,10 @@ fn main() -> Result<(), Box<dyn Error>> {
                     match b {
                         BuiltIn::Print => {},
                         BuiltIn::PrintLn => {},
-                        _ => println!("{}", putt.stack.last().unwrap())
+                        _ => println!("{}", match putt.stack.last() {
+                            Some(atom) => format!("{}", atom),
+                            None => "[]".to_string()
+                        })
                     }
                 }
                 _ => println!("{}", atom)
@@ -60,7 +63,10 @@ fn main() -> Result<(), Box<dyn Error>> {
                         match b {
                             BuiltIn::Print => {},
                             BuiltIn::PrintLn => {},
-                            _ => println!("{}", putt.stack.last().unwrap())
+                            _ => println!("{}", match putt.stack.last() {
+                                Some(atom) => format!("{}", atom),
+                                None => "[]".to_string()
+                            })
                         }
                     }
                     _ => println!("{}", atom)

@@ -1,6 +1,6 @@
 use std::error::Error;
 
-const DEBUG: bool = true;
+const DEBUG: bool = false;
 
 use nom::error::VerboseError;
 
@@ -74,26 +74,6 @@ impl Putt {
     pub fn eval_expression(&mut self) -> Result<(), &str> {
         if let Some(e) = self.src.clone() {
             match e {
-                // Constants and quoted s-expressions are our base-case
-                // Expr::Constant(_) => Some(e),
-                // // we then recursively `eval_expression` in the context of our special forms
-                // // and built-in operators
-                // Expr::If(pred, true_branch) => {
-                //   let reduce_pred = eval_expression(*pred)?;
-                //   if get_bool_from_ref(reduce_pred)? {
-                //     eval_expression(*true_branch)
-                //   } else {
-                //     None
-                //   }
-                // }
-                // Expr::IfElse(pred, true_branch, false_branch) => {
-                //   let reduce_pred = eval_expression(*pred)?;
-                //   if get_bool_from_ref(reduce_pred)? {
-                //     eval_expression(*true_branch)
-                //   } else {
-                //     eval_expression(*false_branch)
-                //   }
-                // }
                 Expr::Function(head) => {
                     for atom in head {
                         self.inst.push(atom);
@@ -104,7 +84,7 @@ impl Putt {
 
                         let top = self.inst.get_mut(self.pc).unwrap().clone();
                         if let Atom::BuiltIn(bi) = top {
-                            bi.call(&mut self.stack);
+                            bi.call(&mut self.stack, &mut self.pc);
                             self.pc += 1;
                         } else {
                             self.stack.push(top);

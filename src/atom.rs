@@ -1,37 +1,4 @@
 use super::*;
-// struct Atom {
-//     args: u8,
-//     call: Call
-// }
-
-// impl Atom {
-//     pub fn new(args: u8, call: Call) -> Self {
-//         Atom {
-//             args,
-//             call
-//         }
-//     }
-// }
-
-// enum Call {
-//     Lambda(Box<dyn FnMut(Box<Vec<&mut Atom>>, Box<Vec<&mut Atom>>)>),
-//     Op(Op)
-// }
-
-// enum Op {
-//     Add,
-//     Sub,
-//     Multi,
-//     Divis,
-//     Factorial,
-//     Modulus,
-//     Equal,
-//     Power
-// }
-
-// const Atoms: [(&str, &Atom); 1] = [
-//     ("?", &Atom::new(3, Call::Lambda(Box::new(|stack: Box<Vec<Atom>>, (a, b, c)| { if {stack.push(b)} else {stack.push(a)}))),
-// ];
 
 #[derive(Debug, PartialEq, Clone)]
 pub enum Atom {
@@ -58,7 +25,7 @@ impl std::ops::Sub for Atom {
     fn sub(self, rhs: Atom) -> Self {
         match (self, rhs) {
             (Atom::Float(lhs), Atom::Float(rhs)) => Atom::Float(lhs - rhs),
-            // (Atom::Str(lhs), Atom::Str(rhs)) => Atom::Str(format!("{}{}", lhs, rhs)),
+            (Atom::Str(lhs), Atom::Str(rhs)) => Atom::Str(format!("{}{}", lhs, rhs)),
             (_, _) => panic!("I can't subtract those types"),
         }
     }
@@ -118,11 +85,8 @@ impl std::fmt::Display for Atom {
             f,
             "{}",
             match &self {
-                // Atom::Num(num) => num.to_string(),
-                // Atom::Boolean(bo) => bo.to_string(),
                 Atom::Str(st) => st.to_string(),
                 Atom::Float(f) => format!("{}", f),
-                // Atom::Keyword(f) => format!("{}", f),
                 Atom::Arr(f) => {
                     f.iter()
                         .map(|x| format!("{}", x))
@@ -132,7 +96,6 @@ impl std::fmt::Display for Atom {
                 Atom::BuiltIn(bi) => match bi {
                     _ => "BuiltIn".to_string(),
                 },
-                _ => "".to_string(),
             }
             .to_string()
         )
@@ -176,7 +139,7 @@ pub enum BuiltIn {
 }
 
 impl BuiltIn {
-    pub fn call(&self, stack: &mut Vec<Atom>, mut pc: &mut usize) {
+    pub fn call(&self, stack: &mut Vec<Atom>, pc: &mut usize) {
         use BuiltIn::*;
         match self {
             // Operators
@@ -263,7 +226,7 @@ impl BuiltIn {
             Sum => {
                 if let Some(Atom::Float(a)) = stack.pop() {
                     let mut total = 0.0;
-                    for i in 0..(a as usize) {
+                    for _ in 0..(a as usize) {
                         total += match stack.pop() {
                             Some(atom) => match atom {
                                 Atom::Float(f) => f,
@@ -284,7 +247,7 @@ impl BuiltIn {
             Avg => { 
                 if let Some(Atom::Float(a)) = stack.pop() { 
                     let mut total = 0.0;
-                    for i in 0..(a as usize) {
+                    for _ in 0..(a as usize) {
                         total += match stack.pop() {
                             Some(atom) => match atom {
                                 Atom::Float(f) => f,
@@ -308,7 +271,7 @@ impl BuiltIn {
                     stack.push(a.clone())
                 }
             }
-            Drop => if let Some(a) = stack.pop() {},
+            Drop => if let Some(_) = stack.pop() {},
             Clear => {
                 *stack = Vec::new();
             }
@@ -321,12 +284,11 @@ impl BuiltIn {
                 }
             }
 
-            // Keywords
             Not => {
                 if let Some(Atom::Float(bo)) = stack.pop() {
-                    stack.push(Atom::Float(match bo {
-                        1.0 => 0.0,
-                        0.0 => 1.0,
+                    stack.push(Atom::Float(match bo as usize {
+                        1 => 0.0,
+                        0 => 1.0,
                         _ => 1.0,
                     }))
                 }

@@ -30,7 +30,9 @@ use atom::*;
 pub struct Putt {
     /// Memory of Putt VM
     pub stack: Vec<Atom>,
+
     pub src: Option<Expr>,
+
     /// Instructions
     pub inst: Vec<Atom>,
     /// Program counter, used for jumps
@@ -61,11 +63,6 @@ impl Putt {
 
         Ok(())
 
-    }
-
-    /// Run the loaded program
-    pub fn run(&self) -> Vec<String> {
-        Vec::new()
     }
 
     /// This function tries to reduce the AST.
@@ -99,50 +96,16 @@ impl Putt {
 
         Ok(())
     }
-
-
-    // // TODO: Define output type
-    // pub fn exec(program: &str) -> Vec<String> {
-    //     let mut putt = Putt::new();
-    //     putt.parse(program);
-    //     putt.run()
-    // }
 }
 
 
 fn factorial(num: Float) -> Float {
-    match num {
-        0.0 => 1.0,
-        1.0 => 1.0,
+    match num as usize {
+        0 => 1.0,
+        1 => 1.0,
         _ => factorial(num - 1.0) * num,
     }
 }
-
-// /// To start we define a couple of helper functions
-// fn get_num_from_ref(e: &Atom) -> Option<Num> {
-//     if let Atom::Float(n) = e {
-//         Some(*n)
-//     } else {
-//         None
-//     }
-// }
-
-// /// To start we define a couple of helper functions
-// fn get_num_from_atom(e: Atom) -> Option<Num> {
-//     if let Atom::Float(n) = e {
-//         Some(n)
-//     } else {
-//         None
-//     }
-// }
-
-// fn get_bool_from_ref(e: &Atom) -> Option<bool> {
-//     if let Atom::Boolean(b) = e {
-//         Some(*b)
-//     } else {
-//         None
-//     }
-// }
 
 #[cfg(test)]
 mod tests {

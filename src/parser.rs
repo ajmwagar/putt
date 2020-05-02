@@ -75,20 +75,6 @@ const NUMERALS: [RomanNumeral; 25] = [
     RomanNumeral {symbol: "I",  value: 1}
 ];
 
-// pub struct Constant {
-//     symbol: &'static str,
-//     value: Atom
-// }
-
-// const CONSTANTS: [Constant; 1] = [
-//     Constant {symbol: "N", value: Atom::Str({
-//         let mut string = String::new();
-//         std::io::stdin().read_to_string(&mut string);
-//         string
-//     })}
-// ];
-
- 
 pub fn from_roman(roman: &str) -> u64 {
     match NUMERALS.iter().find(|num| roman.starts_with(num.symbol)) {
         Some(num) => num.value + from_roman(&roman[num.symbol.len()..]),

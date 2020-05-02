@@ -1,19 +1,18 @@
-use std::{io, io::prelude::*, error::Error, fs::File, path::PathBuf};
-use structopt::StructOpt;
-use putt::*;
 use putt::atom::*;
+use putt::*;
+use std::{error::Error, fs::File, io, io::prelude::*, path::PathBuf};
+use structopt::StructOpt;
 
 #[derive(StructOpt, Debug)]
 #[structopt(name = "putt")]
 struct PuttCLI {
     #[structopt(name = "FILE")]
     /// File to read
-    path: Option<PathBuf>
+    path: Option<PathBuf>,
 }
 
 fn main() -> Result<(), Box<dyn Error>> {
     let puttcli = PuttCLI::from_args();
-
     let mut putt = Putt::new();
 
     // Load file or open REPL
@@ -28,23 +27,22 @@ fn main() -> Result<(), Box<dyn Error>> {
         // Inject printing code at the end
         if let Some(atom) = putt.inst.last() {
             match atom {
-                Atom::BuiltIn(b) => {
-                    match b {
-                        BuiltIn::Print => {},
-                        BuiltIn::PrintLn => {},
-                        _ => println!("{}", match putt.stack.last() {
+                Atom::BuiltIn(b) => match b {
+                    BuiltIn::Print => {}
+                    BuiltIn::PrintLn => {}
+                    _ => println!(
+                        "{}",
+                        match putt.stack.last() {
                             Some(atom) => format!("{}", atom),
-                            None => "[]".to_string()
-                        })
-                    }
-                }
-                _ => println!("{}", atom)
+                            None => "[]".to_string(),
+                        }
+                    ),
+                },
+                _ => println!("{}", atom),
             }
         }
 
-        // println!("{:?}", putt.stack.pop());
-    }
-    else {
+    } else {
         println!("PUTT REPL v0.0.1");
         print!(">> ");
         io::stdout().flush()?;
@@ -59,17 +57,18 @@ fn main() -> Result<(), Box<dyn Error>> {
             // Inject printing code at the end
             if let Some(atom) = putt.inst.last() {
                 match atom {
-                    Atom::BuiltIn(b) => {
-                        match b {
-                            BuiltIn::Print => {},
-                            BuiltIn::PrintLn => {},
-                            _ => println!("{}", match putt.stack.last() {
+                    Atom::BuiltIn(b) => match b {
+                        BuiltIn::Print => {}
+                        BuiltIn::PrintLn => {}
+                        _ => println!(
+                            "{}",
+                            match putt.stack.last() {
                                 Some(atom) => format!("{}", atom),
-                                None => "[]".to_string()
-                            })
-                        }
-                    }
-                    _ => println!("{}", atom)
+                                None => "[]".to_string(),
+                            }
+                        ),
+                    },
+                    _ => println!("{}", atom),
                 }
             }
 
